@@ -251,7 +251,7 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
               </Grid>
 
               <Grid item xs={4}>
-                <InputLabel id='project-status-label'>Start Date</InputLabel>
+                <InputLabel id='project-startdate-label'>Start Date</InputLabel>
 
                 <Controller
                   control={control}
@@ -265,12 +265,16 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
               </Grid>
 
               <Grid item xs={4}>
-                <InputLabel id='project-status-label'>End Date</InputLabel>
-                <DatePicker format='DD/MM/YYYY' />
+                <InputLabel id='project-enddata-label'>End Date</InputLabel>
+                <Controller
+                  control={control}
+                  name='endDate'
+                  render={({ field }) => <DatePicker format='DD/MM/YYYY' {...field} />}
+                />
               </Grid>
 
               <Grid item xs={4}>
-                <InputLabel id='project-status-label'>Technical</InputLabel>
+                <InputLabel id='project-technical-label'>Technical</InputLabel>
                 <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
                   <div>
                     <IconButton

@@ -26,7 +26,7 @@ const Projects = () => {
         startIcon={<AddIcon />}
         onClick={handleOpenModalAddUpdate}
       >
-        Create/Update Project
+        Create new Project
       </Button>
 
       {visibleModalAddUpdate && (

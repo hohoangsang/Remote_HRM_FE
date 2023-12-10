@@ -82,8 +82,6 @@ function MemberModal({ visible, onClose, initialValues, onFinish }: Props) {
     reset();
   };
 
-  console.log(watch());
-
   return (
     <Modal open={visible} onClose={handleClose} disableEscapeKeyDown>
       <Box sx={{ ...style }}>
