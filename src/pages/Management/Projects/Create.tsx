@@ -60,22 +60,10 @@ const style = {
 
 const classNameError = 'mt-1 min-h-[1.25rem] text-red-500';
 
-function createData(member: string, position: string) {
-  return { member, position };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 'Project Owner'),
-  createData('Ice cream sandwich', 'Team lead'),
-  createData('Eclair', 'Front end'),
-  createData('Cupcake', 'Back end'),
-  createData('Gingerbread', 'Tester')
-];
-
 function CreateProjectModal({ visible, onClose, initialValue }: Props) {
   const [visibleTechnical, setVisibleTechnical] = useState(false);
   const [visibleMember, setVisibleMember] = useState(false);
-  const [memberList, setMemberList] = useState<any>(rows);
+  const [memberList, setMemberList] = useState<any>([]);
   const [initMember, setInitMember] = useState<any>({});
   const [technicalList, setTechnicalList] = useState<any>([]);
   const [viewOnlyTech, setViewOnlyTech] = useState(false);
@@ -112,7 +100,8 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
     control,
     setError,
     trigger,
-    getValues
+    getValues,
+    setValue
   } = methods;
 
   const onSubmit = handleSubmit((data?: any) => {
@@ -150,15 +139,19 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
     });
   };
 
-  const handleAddMember = (newMember: any) => {
+  const handleAddMember = async (newMember: any) => {
     const newMemberList = cloneDeep(memberList);
     newMemberList.push(newMember);
     setMemberList(newMemberList);
+    setValue('member', newMemberList);
+    await trigger(['member']);
   };
 
-  const handleRemoveMember = (index: number) => {
+  const handleRemoveMember = async (index: number) => {
     const newMemberList = cloneDeep(memberList).toSpliced(index, 1);
     setMemberList(newMemberList);
+    setValue('member', newMemberList);
+    await trigger(['member']);
   };
 
   const handleOpenEditMember = (member: any) => {
@@ -166,9 +159,11 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
     setInitMember(member);
   };
 
-  const handleApplyTechnicalList = (newTechList: any) => {
+  const handleApplyTechnicalList = async (newTechList: any) => {
     setTechnicalList(newTechList);
     handleCloseTechnical();
+    setValue('technical', newTechList);
+    await trigger(['technical']);
   };
 
   return (
@@ -300,6 +295,9 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                     ) : null}
                   </div>
                 </Box>
+                <div className={classNameError} style={{ color: 'red' }}>
+                  {errors.technical?.message}
+                </div>
               </Grid>
               <Grid item xs={12}>
                 <fieldset>
@@ -356,20 +354,30 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                       </Table>
                     </TableContainer>
                   ) : null}
+
+                  <div className={classNameError} style={{ color: 'red' }}>
+                    {errors.member?.message}
+                  </div>
                 </fieldset>
               </Grid>
               <Grid item xs={12}>
                 <InputLabel id='project-status-label'>Description</InputLabel>
-                <TextareaAutosize
+                <Controller
+                  control={control}
                   name='description'
-                  placeholder='Description'
-                  minRows={2}
-                  style={{
-                    width: '100%',
-                    border: '1px solid rgb(100, 116, 139)',
-                    borderRadius: '5px',
-                    padding: '8px 14px'
-                  }}
+                  render={({ field }) => (
+                    <TextareaAutosize
+                      {...field}
+                      placeholder='Description'
+                      minRows={2}
+                      style={{
+                        width: '100%',
+                        border: '1px solid rgb(100, 116, 139)',
+                        borderRadius: '5px',
+                        padding: '8px 14px'
+                      }}
+                    />
+                  )}
                 />
               </Grid>
             </Grid>

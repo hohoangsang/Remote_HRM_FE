@@ -4,11 +4,14 @@ import {
   AvatarGroup,
   Box,
   Button,
+  FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
   Modal,
   Paper,
+  Radio,
+  RadioGroup,
   Select,
   Table,
   TableBody,
@@ -26,7 +29,6 @@ import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 import IconButton from '@mui/material/IconButton';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from 'react';
-// import MemberModal from './MemberModal';
 import SaveIcon from '@mui/icons-material/Save';
 import { projectStatusOption } from '../../../enum';
 import Swal from 'sweetalert2';
@@ -36,6 +38,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { cloneDeep } from 'lodash';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import LineManagerModal from './LineManagerModal';
+import SkillModal from './SkillModal';
 
 const MySwal = withReactContent(Swal);
 
@@ -60,33 +63,21 @@ const style = {
 
 const classNameError = 'mt-1 min-h-[1.25rem] text-red-500';
 
-function createData(member: string, position: string) {
-  return { member, position };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 'Project Owner'),
-  createData('Ice cream sandwich', 'Team lead'),
-  createData('Eclair', 'Front end'),
-  createData('Cupcake', 'Back end'),
-  createData('Gingerbread', 'Tester')
-];
-
 function CreateEmployeeModal({ visible, onClose, initialValue }: Props) {
   const [visibleLineManager, setVisibleLineManager] = useState(false);
-  const [visibleMember, setVisibleMember] = useState(false);
-  const [memberList, setMemberList] = useState<any>(rows);
-  const [initMember, setInitMember] = useState<any>({});
+  const [visibleSkill, setVisibleSkill] = useState(false);
+  const [skillList, setSkillList] = useState<any>([]);
+  const [initSkill, setInitSkill] = useState<any>({});
   const [lineManagerList, setLineManagerList] = useState<any>([]);
   const [viewOnlyLineManager, setViewOnlyLineManager] = useState(false);
 
-  const handleOpenMember = () => {
-    setVisibleMember(true);
+  const handleOpenSkill = () => {
+    setVisibleSkill(true);
   };
 
-  const handleCloseMember = () => {
-    setVisibleMember(false);
-    setInitMember({});
+  const handleCloseSkill = () => {
+    setVisibleSkill(false);
+    setInitSkill({});
   };
 
   const handleOpenLineManager = (view?: boolean) => {
@@ -149,20 +140,24 @@ function CreateEmployeeModal({ visible, onClose, initialValue }: Props) {
     });
   };
 
-  const handleAddMember = (newMember: any) => {
-    const newMemberList = cloneDeep(memberList);
-    newMemberList.push(newMember);
-    setMemberList(newMemberList);
+  const handleAddSkill = async (newSkill: any) => {
+    const newSkillList = cloneDeep(skillList);
+    newSkillList.push(newSkill);
+    setSkillList(newSkillList);
+    setValue('skill', newSkillList);
+    await trigger(['skill']);
   };
 
-  const handleRemoveMember = (index: number) => {
-    const newMemberList = cloneDeep(memberList).toSpliced(index, 1);
-    setMemberList(newMemberList);
+  const handleRemoveSkill = async (index: number) => {
+    const newSkillList = cloneDeep(skillList).toSpliced(index, 1);
+    setSkillList(newSkillList);
+    setValue('skill', newSkillList);
+    await trigger(['skill']);
   };
 
-  const handleOpenEditMember = (member: any) => {
-    handleOpenMember();
-    setInitMember(member);
+  const handleOpenEditSkill = (skill: any) => {
+    handleOpenSkill();
+    setInitSkill(skill);
   };
 
   const handleApplyLineManagerList = async (newLineManagerList: any) => {
@@ -374,48 +369,48 @@ function CreateEmployeeModal({ visible, onClose, initialValue }: Props) {
               </Grid>
               <Grid item xs={12}>
                 <fieldset>
-                  <legend>Members</legend>
+                  <legend>Skill</legend>
                   <Button
                     size='medium'
                     type='button'
                     style={{ margin: '1rem 0' }}
                     variant='contained'
                     startIcon={<AddCircleIcon />}
-                    onClick={handleOpenMember}
+                    onClick={handleOpenSkill}
                   >
-                    Assign member
+                    Add skill
                   </Button>
 
-                  {memberList.length ? (
+                  {skillList.length ? (
                     <TableContainer component={Paper}>
                       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
                         <TableHead>
                           <TableRow>
                             <TableCell>Number</TableCell>
-                            <TableCell>Member</TableCell>
-                            <TableCell align='center'>Position</TableCell>
+                            <TableCell>Skill</TableCell>
+                            <TableCell align='center'>Exp(year)</TableCell>
                             <TableCell align='center'>Action</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {memberList.map((member: any, index: number) => (
-                            <TableRow key={member.member} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                          {skillList.map((skill: any, index: number) => (
+                            <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                               <TableCell component='th' scope='row'>
                                 {index + 1}
                               </TableCell>
                               <TableCell component='th' scope='row'>
-                                {member.member}
+                                {skill.skill}
                               </TableCell>
-                              <TableCell align='center'>{member.position}</TableCell>
+                              <TableCell align='center'>{skill.exp}</TableCell>
                               <TableCell align='center'>
                                 <Box>
-                                  <IconButton color='error' size='medium' onClick={() => handleRemoveMember(index)}>
+                                  <IconButton color='error' size='medium' onClick={() => handleRemoveSkill(index)}>
                                     <DeleteIcon />
                                   </IconButton>
                                   {/* <IconButton
                                     color='primary'
                                     size='medium'
-                                    onClick={() => handleOpenEditMember(member)}
+                                    onClick={() => handleOpenEditSkill(skill)}
                                   >
                                     <ModeEditIcon />
                                   </IconButton> */}
@@ -427,10 +422,28 @@ function CreateEmployeeModal({ visible, onClose, initialValue }: Props) {
                       </Table>
                     </TableContainer>
                   ) : null}
+
+                  <div className={classNameError} style={{ color: 'red' }}>
+                    {errors.skill?.message}
+                  </div>
                 </fieldset>
               </Grid>
               <Grid item xs={12}>
-                <InputLabel id='project-status-label'>Description</InputLabel>
+                <InputLabel id='emplyee-is-manager-label'>Is Manager</InputLabel>
+
+                <Controller
+                  control={control}
+                  name='isManager'
+                  render={({ field }) => (
+                    <RadioGroup {...field} defaultValue={false} style={{display: "flex", gap: "1rem", flexDirection: "row"}}>
+                      <FormControlLabel value={true} control={<Radio />} label='True' />
+                      <FormControlLabel value={false} control={<Radio />} label='False' />
+                    </RadioGroup>
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel id='employee-description-label'>Description</InputLabel>
                 <TextareaAutosize
                   name='description'
                   placeholder='Description'
@@ -458,14 +471,14 @@ function CreateEmployeeModal({ visible, onClose, initialValue }: Props) {
             </Button>
           </form>
         </FormProvider>
-        {/* {visibleMember && (
-          <MemberModal
-            visible={visibleMember}
-            onClose={handleCloseMember}
-            onFinish={handleAddMember}
-            initialValues={initMember}
+        {visibleSkill && (
+          <SkillModal
+            visible={visibleSkill}
+            onClose={handleCloseSkill}
+            onFinish={handleAddSkill}
+            initialValues={initSkill}
           />
-        )} */}
+        )}
 
         {visibleLineManager && (
           <LineManagerModal
