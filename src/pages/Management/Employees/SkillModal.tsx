@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { expOption, projectTechnicalOption } from '../../../enum';
 import { FormSkillType, formSkillSchema } from '../../../utils/rules';
+import ReactSelect from 'react-select';
 
 const classNameError = 'mt-1 min-h-[1.25rem] text-red-500';
 
@@ -77,7 +78,7 @@ function SkillModal({ visible, onClose, initialValues, onFinish }: Props) {
     const exp = getValues('exp');
 
     // console.log({ member, position });
-    onFinish({ skill: skillValue, exp });
+    onFinish({ skill: (skill as any)?.value as any, exp: (exp as any)?.value as any });
     handleClose();
     reset();
   };
@@ -86,7 +87,7 @@ function SkillModal({ visible, onClose, initialValues, onFinish }: Props) {
     <Modal open={visible} onClose={handleClose} disableEscapeKeyDown>
       <Box sx={{ ...style }}>
         <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ textAlign: 'center', fontWeight: 'bold' }}>
-          {initialValues?.name ? 'Update skill' : 'Add skill'}
+          {initialValues?.name ? 'Update Skill' : 'Add Skill'}
         </Typography>
         <FormProvider {...methods}>
           <form>
@@ -96,45 +97,18 @@ function SkillModal({ visible, onClose, initialValues, onFinish }: Props) {
                 <Controller
                   control={control}
                   name='skill'
-                  render={({ field }) => (
-                    <Autocomplete
-                      options={projectTechnicalOption.map((tech: any) => tech.value)}
-                      renderInput={(params) => {
-                        return <TextField {...params} {...field} variant='outlined' size='small' name='member' />;
-                      }}
-                      {...field}
-                      onChange={(e) => {
-                        console.log((e.target as any)?.innerText as any);
-                        setSkillValue((e.target as any)?.innerText);
-                        setValue('skill', `${(e.target as any)?.innerText as any}`);
-                        field.onChange(e);
-                      }}
-                    />
-                  )}
+                  render={({ field }) => <ReactSelect {...field} options={projectTechnicalOption} />}
                 />
                 <div className={classNameError} style={{ color: 'red' }}>
                   {errors.skill?.message}
                 </div>
               </Grid>
               <Grid item xs={6}>
-                <InputLabel id='project-status-label'>Exp(year)</InputLabel>
+                <InputLabel id='project-status-label'>Experience (year)</InputLabel>
                 <Controller
                   control={control}
                   name='exp'
-                  render={({ field }) => (
-                    <Select
-                      size='small'
-                      fullWidth
-                      labelId='project-status-label'
-                      id='project-status'
-                      {...field}
-                      onChange={field.onChange}
-                    >
-                      {expOption.map((status: any) => (
-                        <MenuItem value={status.value}>{status?.label}</MenuItem>
-                      ))}
-                    </Select>
-                  )}
+                  render={({ field }) => <ReactSelect {...field} options={expOption} />}
                 />
                 <div className={classNameError} style={{ color: 'red' }}>
                   {errors.exp?.message}
@@ -144,7 +118,7 @@ function SkillModal({ visible, onClose, initialValues, onFinish }: Props) {
               <Button
                 size='medium'
                 type='button'
-                style={{ margin: '1rem auto', display: 'flex', justifyContent: 'center' }}
+                style={{ margin: '1rem auto', display: 'flex', justifyContent: 'center', marginRight: 0 }}
                 variant='contained'
                 startIcon={<SaveIcon />}
                 onClick={onSubmit}

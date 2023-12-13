@@ -28,7 +28,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from 'react';
 import MemberModal from './MemberModal';
 import SaveIcon from '@mui/icons-material/Save';
-import { projectStatusOption } from '../../../enum';
+import { projectStatusOption, projectTechnicalOption } from '../../../enum';
 import Swal from 'sweetalert2';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import withReactContent from 'sweetalert2-react-content';
@@ -36,6 +36,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { cloneDeep } from 'lodash';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import TechnicalModal from './TechnicalModal';
+import ReactSelect from 'react-select';
 
 const MySwal = withReactContent(Swal);
 
@@ -89,7 +90,7 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
   const methods = useForm<FormProjectType>({
     resolver: yupResolver(formProjectSchema),
     defaultValues: {
-      status: 'Pending'
+      status: { label: 'Pending', value: 'Pending' }
     }
   });
 
@@ -155,6 +156,7 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
   };
 
   const handleOpenEditMember = (member: any) => {
+    console.log(member);
     handleOpenMember();
     setInitMember(member);
   };
@@ -199,8 +201,10 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Grid container spacing={2}>
-              <Grid item xs={8}>
-                <InputLabel id='project-name'>Name</InputLabel>
+              <Grid item xs={6}>
+                <InputLabel style={{ marginBottom: 3 }} id='project-name'>
+                  Name
+                </InputLabel>
                 <Controller
                   control={control}
                   name='name'
@@ -220,24 +224,21 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                   {errors.name?.message}
                 </div>
               </Grid>
-              <Grid item xs={4}>
-                <InputLabel id='project-status-label'>Status</InputLabel>
+
+              <Grid item xs={6}>
+                <InputLabel style={{ marginBottom: 3 }} id='project-status-label'>
+                  Status
+                </InputLabel>
                 <Controller
                   control={control}
                   name='status'
                   render={({ field }) => (
-                    <Select
-                      size='small'
-                      fullWidth
-                      labelId='project-status-label'
+                    <ReactSelect
                       id='project-status'
                       {...field}
-                      disabled={!initialValue?.name}
-                    >
-                      {projectStatusOption.map((status) => (
-                        <MenuItem value={status.value}>{status?.label}</MenuItem>
-                      ))}
-                    </Select>
+                      options={projectStatusOption}
+                      isDisabled={!initialValue?.name}
+                    />
                   )}
                 />
                 <div className={classNameError} style={{ color: 'red' }}>
@@ -245,8 +246,10 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                 </div>
               </Grid>
 
-              <Grid item xs={4}>
-                <InputLabel id='project-startdate-label'>Start Date</InputLabel>
+              <Grid item xs={3}>
+                <InputLabel style={{ marginBottom: 3 }} id='project-startdate-label'>
+                  Start Date
+                </InputLabel>
 
                 <Controller
                   control={control}
@@ -259,8 +262,10 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                 </div>
               </Grid>
 
-              <Grid item xs={4}>
-                <InputLabel id='project-enddata-label'>End Date</InputLabel>
+              <Grid item xs={3}>
+                <InputLabel style={{ marginBottom: 3 }} id='project-enddata-label'>
+                  End Date
+                </InputLabel>
                 <Controller
                   control={control}
                   name='endDate'
@@ -268,8 +273,10 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                 />
               </Grid>
 
-              <Grid item xs={4}>
-                <InputLabel id='project-technical-label'>Technical</InputLabel>
+              {/* <Grid item xs={6}>
+                <InputLabel style={{ marginBottom: 3 }} id='project-technical-label'>
+                  Technical
+                </InputLabel>
                 <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
                   <div>
                     <IconButton
@@ -298,14 +305,29 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                 <div className={classNameError} style={{ color: 'red' }}>
                   {errors.technical?.message}
                 </div>
+              </Grid> */}
+
+              <Grid item xs={6}>
+                <InputLabel style={{ marginBottom: 3 }} id='project-technical-label'>
+                  Technical
+                </InputLabel>
+                <Controller
+                  control={control}
+                  name='technical'
+                  render={({ field }) => <ReactSelect {...field} options={projectTechnicalOption} isMulti />}
+                />
+                <div className={classNameError} style={{ color: 'red' }}>
+                  {errors.technical?.message}
+                </div>
               </Grid>
+
               <Grid item xs={12}>
                 <fieldset>
                   <legend>Members</legend>
                   <Button
                     size='medium'
                     type='button'
-                    style={{ margin: '1rem 0' }}
+                    style={{ margin: '0.5rem 0' }}
                     variant='contained'
                     startIcon={<AddCircleIcon />}
                     onClick={handleOpenMember}
@@ -318,7 +340,7 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                       <Table sx={{ minWidth: 650 }} aria-label='simple table'>
                         <TableHead>
                           <TableRow>
-                            <TableCell>Number</TableCell>
+                            <TableCell>No.</TableCell>
                             <TableCell>Member</TableCell>
                             <TableCell align='center'>Position</TableCell>
                             <TableCell align='center'>Action</TableCell>
@@ -360,15 +382,18 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
                   </div>
                 </fieldset>
               </Grid>
+
               <Grid item xs={12}>
-                <InputLabel id='project-status-label'>Description</InputLabel>
+                <InputLabel style={{ marginBottom: 3 }} id='project-status-label'>
+                  Description
+                </InputLabel>
                 <Controller
                   control={control}
                   name='description'
                   render={({ field }) => (
                     <TextareaAutosize
                       {...field}
-                      placeholder='Description'
+                      placeholder='Description something about this project...'
                       minRows={2}
                       style={{
                         width: '100%',
@@ -385,13 +410,13 @@ function CreateProjectModal({ visible, onClose, initialValue }: Props) {
             <Button
               size='medium'
               type='submit'
-              style={{ margin: '1rem auto', display: 'flex', justifyContent: 'center' }}
+              style={{ margin: '1rem auto', display: 'flex', justifyContent: 'center', marginRight: 0 }}
               variant='contained'
               startIcon={<SaveIcon />}
               color='primary'
               onClick={onSubmit}
             >
-              Save
+              Submit
             </Button>
           </form>
         </FormProvider>

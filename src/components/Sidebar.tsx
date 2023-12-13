@@ -1,54 +1,54 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import Logo from '../images/logo/logo.svg';
-import SidebarLinkGroup from './SidebarLinkGroup';
+import React, { useEffect, useRef, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
+import Logo from '../images/logo/logo.svg'
+import SidebarLinkGroup from './SidebarLinkGroup'
 
 interface SidebarProps {
-  sidebarOpen: boolean;
-  setSidebarOpen: (arg: boolean) => void;
+  sidebarOpen: boolean
+  setSidebarOpen: (arg: boolean) => void
 }
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
-  const location = useLocation();
-  const { pathname } = location;
+  const location = useLocation()
+  const { pathname } = location
 
-  const trigger = useRef<any>(null);
-  const sidebar = useRef<any>(null);
+  const trigger = useRef<any>(null)
+  const sidebar = useRef<any>(null)
 
-  const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
+  const storedSidebarExpanded = localStorage.getItem('sidebar-expanded')
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
-  );
+  )
 
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
-      if (!sidebar.current || !trigger.current) return;
-      if (!sidebarOpen || sidebar.current.contains(target) || trigger.current.contains(target)) return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
-  });
+      if (!sidebar.current || !trigger.current) return
+      if (!sidebarOpen || sidebar.current.contains(target) || trigger.current.contains(target)) return
+      setSidebarOpen(false)
+    }
+    document.addEventListener('click', clickHandler)
+    return () => document.removeEventListener('click', clickHandler)
+  })
 
   // close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }: KeyboardEvent) => {
-      if (!sidebarOpen || keyCode !== 27) return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener('keydown', keyHandler);
-    return () => document.removeEventListener('keydown', keyHandler);
-  });
+      if (!sidebarOpen || keyCode !== 27) return
+      setSidebarOpen(false)
+    }
+    document.addEventListener('keydown', keyHandler)
+    return () => document.removeEventListener('keydown', keyHandler)
+  })
 
   useEffect(() => {
-    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
+    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString())
     if (sidebarExpanded) {
-      document.querySelector('body')?.classList.add('sidebar-expanded');
+      document.querySelector('body')?.classList.add('sidebar-expanded')
     } else {
-      document.querySelector('body')?.classList.remove('sidebar-expanded');
+      document.querySelector('body')?.classList.remove('sidebar-expanded')
     }
-  }, [sidebarExpanded]);
+  }, [sidebarExpanded])
 
   return (
     <aside
@@ -106,8 +106,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           (pathname === '/' || pathname.includes('dashboard')) && 'bg-graydark dark:bg-meta-4'
                         }`}
                         onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded ? handleClick() : setSidebarExpanded(true);
+                          e.preventDefault()
+                          sidebarExpanded ? handleClick() : setSidebarExpanded(true)
                         }}
                       >
                         <svg
@@ -178,11 +178,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Projects
                             </NavLink>
                           </li>
+                         
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
                     </React.Fragment>
-                  );
+                  )
                 }}
               </SidebarLinkGroup>
               {/* <!-- Menu Item Dashboard --> */}
@@ -198,8 +199,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           (pathname === '/forms' || pathname.includes('forms')) && 'bg-graydark dark:bg-meta-4'
                         }`}
                         onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded ? handleClick() : setSidebarExpanded(true);
+                          e.preventDefault()
+                          sidebarExpanded ? handleClick() : setSidebarExpanded(true)
                         }}
                       >
                         <svg
@@ -273,11 +274,33 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Projects
                             </NavLink>
                           </li>
+                          <li>
+                            <NavLink
+                              to="/management/details"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Details
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/management/employee-details"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Employee Details
+                            </NavLink>
+                          </li>
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
                     </React.Fragment>
-                  );
+                  )
                 }}
               </SidebarLinkGroup>
               {/* <!-- Menu Item Forms --> */}
@@ -343,8 +366,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           (pathname === '/ui' || pathname.includes('ui')) && 'bg-graydark dark:bg-meta-4'
                         }`}
                         onClick={(e) => {
-                          e.preventDefault();
-                          sidebarExpanded ? handleClick() : setSidebarExpanded(true);
+                          e.preventDefault()
+                          sidebarExpanded ? handleClick() : setSidebarExpanded(true)
                         }}
                       >
                         <svg
@@ -421,7 +444,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
                     </React.Fragment>
-                  );
+                  )
                 }}
               </SidebarLinkGroup>
               {/* <!-- Menu Item Ui Elements --> */}
@@ -431,7 +454,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         {/* <!-- Sidebar Menu --> */}
       </div>
     </aside>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar
